@@ -1,6 +1,6 @@
 {
   "name": "Sorteo de cartas",
-  "short_name": "Cartas",
+  "short_name": "Shufflers",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
