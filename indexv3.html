@@ -195,7 +195,7 @@ function ver(id){ ["galeria","crear","sobre","revelar","resumen"].forEach(s => $
 /* ---- Guardado en el navegador (IndexedDB) ---- */
 const abrirDB = () => new Promise(ok => {
   try{
-    const r = indexedDB.open("sorteo-cartas", 1);
+    const r = indexedDB.open("shufflers", 1);
     r.onupgradeneeded = () => r.result.createObjectStore("sobres", {keyPath:"id"});
     r.onsuccess = () => { db = r.result; ok(); };
     r.onerror = () => ok();
