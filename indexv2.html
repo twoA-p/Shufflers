@@ -91,16 +91,16 @@ input[type=text]{font:inherit;width:100%;max-width:320px;padding:10px 14px;borde
 .escena{position:relative;width:min(280px,72vw);margin:0 auto;--r:#fff}
 .rayos{position:absolute;left:50%;top:50%;width:230%;aspect-ratio:1;translate:-50% -50%;background:repeating-conic-gradient(var(--r) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000,transparent 62%);mask:radial-gradient(circle,#000,transparent 62%);opacity:0;animation:gira 14s linear infinite;pointer-events:none;transition:opacity .4s}
 @keyframes gira{to{rotate:360deg}}
-.escena[data-r="4"] .rayos{opacity:.25}
-.escena[data-r="5"] .rayos{opacity:.6}
+.escena[data-r="SR"] .rayos{opacity:.25}
+.escena[data-r="SSR"] .rayos{opacity:.6}
 .slot{position:relative;width:100%;aspect-ratio:5/7;padding:0;background:none;border-radius:0;display:block}
 .carta{position:absolute;inset:0;border-radius:var(--radio);border:5px solid var(--r,#fff);overflow:hidden;box-shadow:0 16px 38px rgba(0,0,0,.45);background:#222}
 .carta img{width:100%;height:100%;object-fit:cover;display:block}
-.carta.r4{box-shadow:0 0 26px var(--r),0 16px 38px rgba(0,0,0,.45)}
-.carta.r5{box-shadow:0 0 44px var(--r),0 0 90px var(--r),0 16px 38px rgba(0,0,0,.45)}
+.carta.SR{box-shadow:0 0 26px var(--r),0 16px 38px rgba(0,0,0,.45)}
+.carta.SSR{box-shadow:0 0 44px var(--r),0 0 90px var(--r),0 16px 38px rgba(0,0,0,.45)}
 .dorso{--r:#fff;background:repeating-linear-gradient(45deg,#4b3fd1 0 12px,#5d50ea 12px 24px);display:grid;place-items:center;font-size:3.4rem}
 .carta.entra{animation:voltea .55s cubic-bezier(.2,.8,.3,1.2)}
-.carta.entra.r5{animation:voltea .55s cubic-bezier(.2,.8,.3,1.2),latido 1.4s .6s ease-in-out infinite}
+.carta.entra.SSR{animation:voltea .55s cubic-bezier(.2,.8,.3,1.2),latido 1.4s .6s ease-in-out infinite}
 @keyframes voltea{from{transform:rotateY(90deg) scale(.85);opacity:0}to{transform:none;opacity:1}}
 @keyframes latido{50%{box-shadow:0 0 70px var(--r),0 0 130px var(--r)}}
 .carta.entra::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);animation:pasa .9s .2s ease-out both}
@@ -176,7 +176,7 @@ input[type=text]{font:inherit;width:100%;max-width:320px;padding:10px 14px;borde
 
 <script>
 const MIN = 1, MAX = 12;                       // cartas por sobre
-const R = {3:"#6ec1ff", 4:"#c77dff", 5:"#ffc83d"}; // color por rareza (★3, ★4, ★5)
+const R = {R:"#c0c8d4", SR:"#ffc83d", SSR:"#ff40f5"}; // plateado, dorado, rosa // color por rareza (★3, ★4, ★5)
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let sobres = [], borrador = [], portada = null, actual = null, mazo = [], pos = 0, db = null;
@@ -258,7 +258,7 @@ $("quitarPortada").onclick = () => { if(portada) URL.revokeObjectURL(portada.url
 $("archivos").addEventListener("change", e => {
   for(const f of e.target.files){
     if(borrador.length >= MAX) break;
-    if(f.type.startsWith("image/")) borrador.push({blob:f, nombre:f.name, rareza:3, url:URL.createObjectURL(f)});
+    if(f.type.startsWith("image/")) borrador.push({blob:f, nombre:f.name, rareza:R, url:URL.createObjectURL(f)});
   }
   e.target.value = ""; pintar();
 });
@@ -270,7 +270,7 @@ function pintar(){
     d.className = "thumb"; d.style.setProperty("--r", R[x.rareza]);
     d.innerHTML = `<img src="${x.url}" alt="${esc(x.nombre)}"><button class="quitar" aria-label="Quitar carta">×</button><button class="rar" aria-label="Cambiar rareza">★${x.rareza}</button>`;
     d.querySelector(".quitar").onclick = () => { URL.revokeObjectURL(x.url); borrador.splice(i,1); pintar(); };
-    d.querySelector(".rar").onclick = () => { x.rareza = x.rareza === 5 ? 3 : x.rareza + 1; pintar(); };
+    d.querySelector(".rar").onclick = () => { x.rareza = x.rareza === SSR ? R : x.rareza + 1; pintar(); };
     c.appendChild(d);
   });
   $("contador").textContent = `${borrador.length} de ${MAX} cartas`;
@@ -331,8 +331,8 @@ $("slot").onclick = () => {
   $("estrellas").textContent = "★".repeat(c.rareza); $("estrellas").style.color = col;
   $("cuenta").textContent = `${pos} / ${mazo.length}`;
   $("pista").textContent = pos < mazo.length ? "Toca para la siguiente carta" : "Toca para ver el resumen";
-  if(c.rareza >= 4) flash(c.rareza === 5 ? .9 : .45, col);
-  if(c.rareza === 5){ const m = document.querySelector("main"); m.classList.remove("tiembla"); void m.offsetWidth; m.classList.add("tiembla"); }
+  if(c.rareza >= SR) flash(c.rareza === 5 ? .9 : .45, col);
+  if(c.rareza === SSR){ const m = document.querySelector("main"); m.classList.remove("tiembla"); void m.offsetWidth; m.classList.add("tiembla"); }
 };
 $("saltar").onclick = () => resumen(true);
 
@@ -359,7 +359,7 @@ function resumen(marcar){
   galeria();
 })();
 
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw v2.js").catch(()=>{});
 </script>
 </body>
 </html>
