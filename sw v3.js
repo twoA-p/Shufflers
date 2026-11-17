@@ -1,4 +1,4 @@
-// Si cambias algo de la app, sube el número de versión para que se actualice.
+// Si cambias algo de la app, sube el número de versión para que este se actualice.
 const C = "sorteo-cartas-v3";
 // Si agregas un fondo (ej: fondo.jpg), añádelo a esta lista para que funcione sin internet.
 const F = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
